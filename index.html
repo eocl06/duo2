@@ -1,390 +1,489 @@
-.rules {
-            margin-top: 30px;
-            padding: 25px;
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            border-radius: 15px;
-         <!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duo - Puzzle Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Duo - Zeka Oyunu</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        html {
+            touch-action: manipulation;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
-            font-weight: 600;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-weight: 500;
+            background: #2d2d2d;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            transition: background 0.6s ease;
-            position: relative;
             overflow: hidden;
-            padding: 0;
-        }
-
-        /* Animated background particles */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(-10%, -10%) rotate(0deg); }
-            50% { transform: translate(10%, 10%) rotate(180deg); }
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 35px;
-            border-radius: 30px;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2),
-                        0 0 100px rgba(255,255,255,0.1) inset;
-            text-align: center;
-            max-width: 700px;
-            width: 100%;
             position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255,255,255,0.2);
-            margin: 20px;
         }
 
-        /* Mobile full screen */
-        @media (max-width: 768px) {
-            body {
-                padding: 0;
-                align-items: flex-start;
-            }
-            
-            .container {
-                margin: 0;
-                max-width: 100%;
-                width: 100%;
-                min-height: 100vh;
-                border-radius: 0;
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 3em !important;
-            }
-            
-            .grid {
-                grid-template-columns: repeat(6, 1fr) !important;
-                grid-template-rows: repeat(6, 1fr) !important;
-                width: 100%;
-                max-width: 450px;
-                margin: 0 auto;
-                aspect-ratio: 1;
-            }
-            
-            .cell {
-                width: 100%;
-                height: 100%;
-                font-size: 2.2em !important;
-            }
-            
-            .constraint {
-                font-size: 16px !important;
-                padding: 3px 7px !important;
-            }
-            
-            .constraint-h {
-                right: -18px !important;
-            }
-            
-            .constraint-v {
-                bottom: -18px !important;
-            }
-            
-            .stats > div {
-                padding: 10px 15px !important;
-                font-size: 0.95em;
-            }
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #2d2d2d;
+            position: relative;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .header {
+            background: #2d2d2d;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         h1 {
-            margin-bottom: 25px;
-            font-size: 4em;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 10px rgba(102,126,234,0.1);
-            letter-spacing: -2px;
-        }
-
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .settings-btn, .new-game-btn, .hint-btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.05em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .settings-btn {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
-            font-size: 1.4em;
-            padding: 14px 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .settings-btn:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-
-        .new-game-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-size: 1.6em;
+            font-weight: 700;
             color: white;
-            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+            text-align: center;
+            letter-spacing: -0.5px;
         }
 
-        .new-game-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(102,126,234,0.4);
-        }
-
-        .hint-btn {
-            background: linear-gradient(135deg, #fa709a, #fee140);
-            color: white;
-            box-shadow: 0 4px 15px rgba(250,112,154,0.3);
-        }
-
-        .hint-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(250,112,154,0.4);
-        }
-
-        /* Button ripple effect */
-        .settings-btn::after, .new-game-btn::after, .hint-btn::after {
-            content: '';
+        .header-right {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.5);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .settings-btn:active::after, .new-game-btn:active::after, .hint-btn:active::after {
-            width: 300px;
-            height: 300px;
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.95);
+        }
+
+        .timer-display {
+            position: absolute;
+            left: 20px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .timer-display::before {
+            content: '⏱️';
+            font-size: 0.9em;
+        }
+
+        .game-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .game-board {
             display: inline-block;
             position: relative;
-            margin: 30px auto;
-            width: 100%;
-            padding: 0 10px;
+            margin: 0 auto 30px;
+            touch-action: manipulation;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(6, 80px);
-            grid-template-rows: repeat(6, 80px);
-            gap: 4px;
-            background: linear-gradient(135deg, #e0e5ec, #f0f4f8);
-            padding: 5px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1),
-                        0 0 60px rgba(102,126,234,0.05) inset;
-            margin: 0 auto;
-            width: fit-content;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1px;
+            border-radius: 12px;
+            width: min(85vw, 380px);
+            aspect-ratio: 1 / 1;
+            overflow: hidden; /* Fix for corner overflow */
+            position: relative;
         }
 
         .cell {
-            background: linear-gradient(145deg, #ffffff, #f8f9fa);
-            border: 2px solid #e1e4e8;
+            background: #3a3a3a;
+            border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.8em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: clamp(1.8em, 6vw, 2.5em);
+            transition: all 0.15s ease;
             position: relative;
             overflow: visible;
-            border-radius: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            touch-action: manipulation;
         }
 
-        .cell:hover:not(.fixed) {
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            transform: translateY(-3px) scale(1.08);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            border-color: #667eea;
-            z-index: 20;
+        .cell.game-completed {
+            cursor: not-allowed;
+        }
+
+        .cell::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.2s ease;
+            pointer-events: none;
+            border-radius: 4px;
+            z-index: 1;
+        }
+
+        .cell:active:not(.fixed):not(.game-completed)::after {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 1;
         }
 
         .cell.fixed {
-            background: linear-gradient(145deg, #e9ecef, #dee2e6);
+            background: #4a4a4a;
             cursor: not-allowed;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .cell.symbol-appear {
+            animation: symbolBounce 0.3s ease;
+        }
+
+        @keyframes symbolBounce {
+            0% { transform: scale(0.9); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .cell.error {
-            background: linear-gradient(145deg, #ffe0e0, #ffcccc);
-            border-color: #ff6b6b;
-            animation: shake 0.5s ease, errorPulse 1s ease;
-            box-shadow: 0 0 20px rgba(255,107,107,0.3);
+            background: rgba(255, 255, 255, 0.05);
+            animation: shake 0.4s ease;
+        }
+
+        .cell.wrong-hint {
+            background: rgba(255, 204, 0, 0.1);
+            animation: pulse 1s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.98); opacity: 0.8; }
         }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px) rotate(-2deg); }
-            75% { transform: translateX(5px) rotate(2deg); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
         }
 
         .cell.success {
-            animation: successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            background: linear-gradient(145deg, #d3f9d8, #b2f2bb);
-            box-shadow: 0 0 30px rgba(64,192,87,0.4);
+            animation: successBounce 0.5s ease;
+            background: rgba(255, 255, 255, 0.08);
         }
 
         @keyframes successBounce {
             0% { transform: scale(1); }
-            40% { transform: scale(1.3) rotate(5deg); }
-            60% { transform: scale(0.9) rotate(-3deg); }
-            80% { transform: scale(1.1) rotate(1deg); }
+            50% { transform: scale(1.1); }
             100% { transform: scale(1); }
-        }
-
-        @keyframes errorPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .constraint {
             position: absolute;
-            font-size: 20px;
-            font-weight: 900;
-            color: #1a1a1a;
-            background: linear-gradient(145deg, #ffffff, #f0f4f8);
-            padding: 5px 10px;
-            border-radius: 10px;
-            z-index: 15;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15),
-                        0 0 20px rgba(102,126,234,0.1);
-            border: 1px solid rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
+            font-size: clamp(12px, 3vw, 16px);
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.6);
+            background: transparent;
+            z-index: 10;
+            padding: 0;
+            border: none;
+            pointer-events: none;
         }
 
         .constraint-h {
             top: 50%;
-            right: -32px;
+            right: -8px;
             transform: translateY(-50%);
         }
 
         .constraint-v {
-            bottom: -32px;
+            bottom: -8px;
             left: 50%;
             transform: translateX(-50%);
         }
 
-        .stats {
-            margin-top: 30px;
-            display: flex;
-            justify-content: space-around;
-            font-size: 1.15em;
-            gap: 20px;
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 20px;
         }
 
-        .stats > div {
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            padding: 14px 24px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            flex: 1;
-            transition: all 0.3s ease;
-        }
-
-        .stats > div:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-        }
-
-        .rules {
-            margin-top: 25px;
-            padding: 20px;
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            border-radius: 15px;
-            text-align: left;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-
-        .rules h3 {
-            margin-bottom: 12px;
-            color: #495057;
-            font-size: 1.2em;
-        }
-
-        .rules ul {
-            list-style: none;
-            color: #6c757d;
-        }
-
-        .rules li {
-            margin: 8px 0;
-            padding-left: 25px;
+        .control-btn {
+            padding: 16px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
             position: relative;
         }
 
-        .rules li:before {
-            content: "▸";
-            position: absolute;
-            left: 0;
-            color: #667eea;
-            font-weight: bold;
+        .control-btn:active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(0.98);
         }
 
-        /* Settings Modal */
-        .settings-modal {
+        /* Time penalty popup animation */
+        .time-penalty {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 100, 100, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
+            animation: penaltyPopup 1.5s ease-out;
+            z-index: 100;
+            white-space: nowrap;
+        }
+
+        @keyframes penaltyPopup {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px) scale(0.8);
+            }
+            20% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1.1);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-5px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-30px) scale(0.9);
+            }
+        }
+
+        .instructions {
+            width: 100%;
+            max-width: 380px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .instructions-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .instructions-title {
+            font-size: 1em;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .instructions-toggle {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.6);
+            transition: transform 0.3s ease;
+        }
+
+        .instructions-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .instructions-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            position: relative;
+        }
+
+        .instructions-content.open {
+            max-height: 420px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+            scroll-behavior: smooth;
+            overscroll-behavior: contain;
+            box-shadow: inset 0 -10px 10px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Custom scrollbar for webkit browsers */
+        .instructions-content.open::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .instructions-content.open::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .instructions-content.open::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .instructions-content.open::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .instructions-inner {
+            padding: 20px;
+            padding-bottom: 25px;
+        }
+
+        .instruction-section {
+            margin-bottom: 20px;
+        }
+
+        .instruction-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .instruction-title {
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .instruction-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .rule-example {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .rule-example-symbols {
+            font-size: 1.2em;
+        }
+
+        .rule-status {
+            font-size: 1.1em;
+        }
+
+        .rule-status.valid {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+        }
+
+        .rule-status.invalid {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .constraint-example {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1.1em;
+        }
+
+        .penalty-info {
+            background: rgba(255, 100, 100, 0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 100, 100, 0.2);
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .daily-info {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 20px;
+            font-size: 0.85em;
+        }
+
+        /* Modal Styles */
+        .modal {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            padding: 35px;
-            border-radius: 25px;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            background: #3a3a3a;
+            padding: 30px 25px;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
             z-index: 1000;
-            max-width: 420px;
             width: 90%;
-            border: 1px solid rgba(255,255,255,0.2);
-            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 420px;
+            animation: modalSlideIn 0.4s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         @keyframes modalSlideIn {
@@ -398,286 +497,93 @@
             }
         }
 
-        .settings-modal.show {
+        .modal.show {
             display: block;
         }
 
-        .settings-title {
-            font-size: 1.8em;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .modal-title {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            margin-top: 10px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .victory-modal h2.modal-title {
+            margin-top: 0;
+        }
+
+        .reward-section + .modal-title {
+            margin-top: 0;
         }
 
         .theme-options {
             display: grid;
-            gap: 12px;
+            gap: 10px;
         }
 
         .theme-btn {
-            padding: 18px;
-            border: 2px solid #e1e4e8;
-            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: linear-gradient(145deg, #ffffff, #f8f9fa);
-            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 1em;
             font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            color: white;
+            touch-action: manipulation;
         }
 
-        .theme-btn:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            border-color: #667eea;
+        .theme-btn:active {
+            transform: scale(0.98);
         }
 
         .theme-btn.active {
-            border-color: #667eea;
-            background: linear-gradient(145deg, #f0f4ff, #e6ecff);
-            box-shadow: 0 0 30px rgba(102,126,234,0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .theme-symbols {
-            font-size: 1.6em;
+            font-size: 1.4em;
         }
 
-        .close-settings {
+        .close-modal-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            font-size: 1.8em;
+            font-size: 1.5em;
             cursor: pointer;
-            color: #6c757d;
-            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
             width: 40px;
             height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 300;
+            line-height: 1;
+            z-index: 1001;
         }
 
-        .close-settings:hover {
-            background: #f8f9fa;
-            color: #495057;
-            transform: rotate(90deg);
-        }
-
-        /* Bottom sheet statistics */
-        .statistics-sheet {
-            position: fixed;
-            bottom: -100%;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 35px 35px 0 0;
-            padding: 35px;
-            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.2);
-            transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .statistics-sheet.show {
-            bottom: 0;
-        }
-
-        .sheet-handle {
-            width: 60px;
-            height: 6px;
-            background: linear-gradient(135deg, #dee2e6, #ced4da);
-            border-radius: 3px;
-            margin: 0 auto 25px;
-        }
-
-        .stats-title {
-            font-size: 2.2em;
-            margin-bottom: 25px;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-        }
-
-        .stat-item {
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-        }
-
-        .stat-value {
-            font-size: 2.2em;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.95em;
-            font-weight: 600;
-        }
-
-        /* Percentile Ranking Card */
-        .percentile-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 30px;
-            border-radius: 25px;
-            margin: 20px 0;
+        .close-modal-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.2);
             color: white;
-            box-shadow: 0 15px 40px rgba(102,126,234,0.3);
-            position: relative;
-            overflow: hidden;
         }
 
-        .percentile-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: shimmer 3s ease-in-out infinite;
-        }
-
-        @keyframes shimmer {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-30%, -30%); }
-        }
-
-        .percentile-title {
-            font-size: 1.2em;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        .percentile-value {
-            font-size: 4em;
-            font-weight: 900;
-            margin-bottom: 10px;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-
-        .percentile-message {
-            font-size: 1.1em;
-            opacity: 0.95;
-        }
-
-        .percentile-visual {
-            margin-top: 20px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .percentile-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ffd700, #ffed4e);
-            border-radius: 20px;
-            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 20px rgba(255,215,0,0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .percentile-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shine 2s ease-in-out infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .achievement {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 12px 0;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 8px 25px rgba(240,147,251,0.3);
-            animation: achievementSlide 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes achievementSlide {
-            from {
-                opacity: 0;
-                transform: translateX(-50px);
+        @media (hover: hover) {
+            .close-modal-btn:hover {
+                background: rgba(255, 255, 255, 0.15);
+                color: white;
             }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .achievement-icon {
-            font-size: 2.5em;
-        }
-
-        .play-again-btn {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.2em;
-            font-weight: 700;
-            cursor: pointer;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            margin-top: 25px;
-            box-shadow: 0 8px 30px rgba(102,126,234,0.3);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .play-again-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(102,126,234,0.4);
         }
 
         .overlay {
@@ -687,10 +593,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 999;
-            transition: opacity 0.3s ease;
         }
 
         .overlay.show {
@@ -703,88 +607,643 @@
             to { opacity: 1; }
         }
 
-        /* Team specific styles */
-        body.galatasaray { 
-            background: linear-gradient(135deg, #fdb912, #a90432);
-        }
-        body.fenerbahce { 
-            background: linear-gradient(135deg, #003f7f, #ffdf00);
-        }
-        body.besiktas { 
-            background: linear-gradient(135deg, #000000, #666666);
+        /* Victory Modal */
+        .victory-modal {
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .galatasaray .cell { border-color: #fdb912; }
-        .fenerbahce .cell { border-color: #003f7f; }
-        .besiktas .cell { border-color: #666; }
+        .stats-grid {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
 
-        /* Error count display */
-        .error-count {
-            color: #ff6b6b;
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .stat-item.highlight {
+            background: rgba(255, 204, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2em;
             font-weight: 800;
+            color: white;
+            margin-bottom: 5px;
         }
 
-        /* Modern scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95em;
+            font-weight: 600;
         }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f3f5;
+        .comparison-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .comparison-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 10px;
+        .stats-banner {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.06) 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        .stats-banner.visible {
+            display: flex;
+        }
+
+        .stats-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .stats-banner img[src]:not([src=""]) {
+            display: block;
+        }
+
+        .stats-banner::before {
+            content: 'Banner Area (4:3)';
+            position: absolute;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 0.8em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stats-banner.has-image {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: none;
+        }
+
+        .stats-banner.clickable {
+            cursor: pointer;
+        }
+
+        .stats-banner.clickable:active {
+            transform: scale(0.98);
+        }
+
+        @media (hover: hover) {
+            .stats-banner.clickable:hover {
+                transform: scale(1.02);
+                box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        .stats-banner.has-image::before {
+            display: none;
+        }
+
+        .theme-leaderboard {
+            margin-top: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .theme-leaderboard h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2em;
+        }
+
+        .theme-rank {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-rank.gold {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+        }
+
+        .theme-rank.silver {
+            background: rgba(174, 174, 178, 0.1);
+            border: 1px solid rgba(174, 174, 178, 0.3);
+        }
+
+        .theme-rank.bronze {
+            background: rgba(255, 149, 0, 0.1);
+            border: 1px solid rgba(255, 149, 0, 0.3);
+        }
+
+        .theme-rank.current-theme {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .theme-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-position {
+            font-size: 1.4em;
+            font-weight: 900;
+            color: white;
+            width: 30px;
+            text-align: center;
+        }
+
+        .theme-name {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .theme-emoji {
+            font-size: 1.3em;
+        }
+
+        .theme-time {
+            font-weight: 700;
+            color: white;
+            font-size: 1.1em;
+        }
+
+        /* Reward Section Styles */
+        .reward-section {
+            margin: 0 0 25px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(255, 204, 0, 0.15) 0%, rgba(255, 149, 0, 0.1) 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.15);
+            animation: rewardSlideIn 0.6s ease;
+        }
+
+        @keyframes rewardSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.9);
+            }
+            50% {
+                transform: translateY(5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .reward-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 204, 0, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .reward-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .reward-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            animation: bounce 0.6s ease infinite alternate;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .reward-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .reward-code-container {
+            margin: 20px 0;
+        }
+
+        .reward-code-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 204, 0, 0.5);
+        }
+
+        .reward-code {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: #ffcc00;
+            letter-spacing: 2px;
+            font-family: monospace;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .copy-btn {
+            background: rgba(255, 204, 0, 0.2);
+            border: 1px solid rgba(255, 204, 0, 0.4);
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 204, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn.copied {
+            background: rgba(52, 199, 89, 0.2);
+            border-color: rgba(52, 199, 89, 0.4);
+        }
+
+        .copy-btn.copied .copy-text {
+            color: #34c759;
+        }
+
+        .copy-icon {
+            font-size: 1.1em;
+        }
+
+        .reward-text {
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            margin-top: 20px;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .reward-cta-btn {
+            background: linear-gradient(135deg, #ffcc00 0%, #ff9500 100%);
+            color: #000;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 25px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 320px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reward-cta-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .reward-cta-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .reward-cta-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (hover: hover) {
+            .reward-cta-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(255, 204, 0, 0.4);
+            }
+        }
+
+        .play-again-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .play-again-btn:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ffcc00;
+            top: -10px;
+            animation: confetti 3s linear;
+            border-radius: 2px;
+            z-index: 998;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+
+            h1 {
+                font-size: 1.4em;
+            }
+
+            .timer-display {
+                font-size: 0.95em;
+            }
+
+            .game-content {
+                padding: 15px;
+            }
+
+            .grid {
+                width: min(90vw, 350px);
+            }
+
+            .controls {
+                max-width: 350px;
+            }
+
+            .instructions {
+                max-width: 350px;
+            }
+
+            .instructions-content.open {
+                max-height: 320px;
+            }
+
+            .instructions-inner {
+                padding: 15px;
+                padding-bottom: 20px;
+            }
+
+            .victory-modal {
+                max-height: 95vh;
+                padding: 25px 20px;
+            }
+
+            .stats-grid {
+                gap: 12px;
+            }
+
+            .stat-item {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 1.8em;
+            }
+
+            .stats-banner {
+                margin-top: 15px;
+                margin-bottom: 15px;
+            }
+
+            .theme-leaderboard {
+                padding: 15px;
+                margin-top: 15px;
+            }
+
+            .theme-rank {
+                padding: 10px 12px;
+                margin: 6px 0;
+            }
+
+            .theme-position {
+                font-size: 1.2em;
+            }
+
+            .theme-time {
+                font-size: 1em;
+            }
+
+            .reward-section {
+                padding: 15px;
+                margin: 0 0 15px 0;
+            }
+
+            .reward-icon {
+                font-size: 2.5em;
+            }
+
+            .reward-title {
+                font-size: 1.2em;
+            }
+
+            .reward-code {
+                font-size: 1.3em;
+            }
+
+            .reward-code-box {
+                padding: 10px 15px;
+            }
+
+            .reward-cta-btn {
+                font-size: 0.9em;
+                padding: 12px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>DUO</h1>
-        
-        <div class="game-header">
-            <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
-            <div>
-                <button class="hint-btn" onclick="getHint()">💡 İpucu</button>
-                <button class="new-game-btn" onclick="newGame()">Yeni Oyun</button>
+    <div class="game-container">
+        <div class="header">
+            <div class="timer-display" id="timer">0:00</div>
+            <h1>Duo</h1>
+            <div class="header-right">
+                <button class="header-btn" onclick="showStats()" id="statsBtn" style="display: none;">📊</button>
+                <button class="header-btn" onclick="toggleSettings()">⚙️</button>
             </div>
         </div>
 
-        <div class="game-board">
-            <div class="grid" id="gameGrid"></div>
-        </div>
+        <div class="game-content">
+            <div class="game-board">
+                <div class="grid" id="gameGrid"></div>
+            </div>
 
-        <div class="stats">
-            <div>Hamle: <span id="moveCount">0</span></div>
-            <div>Hata: <span id="errorCount" class="error-count">0</span></div>
-            <div>Süre: <span id="timer">00:00</span></div>
-        </div>
+            <div class="controls">
+                <button class="control-btn" onclick="undoMove()">Geri Al</button>
+                <button class="control-btn" onclick="getHint()" id="hintBtn">İpucu</button>
+            </div>
 
-        <div class="rules">
-            <h3>Kurallar:</h3>
-            <ul>
-                <li>Yan yana (yatay/dikey) aynı sembolden en fazla 2 tane olabilir</li>
-                <li>Her satır ve sütunda 3'er tane sembol olmalı</li>
-                <li>= işareti olan hücreler aynı sembolü içermeli</li>
-                <li>× işareti olan hücreler farklı sembolleri içermeli</li>
-            </ul>
+            <div class="instructions">
+                <div class="instructions-header" onclick="toggleInstructions()">
+                    <div class="instructions-title">Nasıl Oynanır</div>
+                    <div class="instructions-toggle" id="instructionsToggle">▼</div>
+                </div>
+                <div class="instructions-content" id="instructionsContent">
+                    <div class="instructions-inner">
+                        <div class="instruction-section">
+                            <div class="instruction-title">🎯 Amaç</div>
+                            <div class="instruction-text">
+                                6x6'lık ızgarayı iki farklı sembolle doldurun. Her hücrede ya <span class="theme-symbol-0" style="font-size: 1.1em;">🐰</span> ya da <span class="theme-symbol-1" style="font-size: 1.1em;">🐢</span> olmalıdır.
+                            </div>
+                        </div>
+
+                        <div class="instruction-section">
+                            <div class="instruction-title">📏 Kural 1: Dengeli Dağılım</div>
+                            <div class="instruction-text">
+                                Her satır ve sütunda tam olarak 3 adet <span class="theme-symbol-0" style="font-size: 1.1em;">🐰</span> ve 3 adet <span class="theme-symbol-1" style="font-size: 1.1em;">🐢</span> bulunmalıdır.
+                            </div>
+                        </div>
+
+                        <div class="instruction-section">
+                            <div class="instruction-title">🚫 Kural 2: Üçlü Yasak</div>
+                            <div class="instruction-text">
+                                Aynı sembolden 3 tanesi yan yana (yatay veya dikey) gelemez.
+                            </div>
+                            <div class="rule-example">
+                                <span class="rule-example-symbols"><span class="theme-symbol-0">🐰</span> <span class="theme-symbol-0">🐰</span></span>
+                                <span class="rule-status valid">✓ Geçerli</span>
+                            </div>
+                            <div class="rule-example">
+                                <span class="rule-example-symbols"><span class="theme-symbol-0">🐰</span> <span class="theme-symbol-0">🐰</span> <span class="theme-symbol-0">🐰</span></span>
+                                <span class="rule-status invalid">✗ Geçersiz</span>
+                            </div>
+                        </div>
+
+                        <div class="instruction-section">
+                            <div class="instruction-title">🔗 Kural 3: Bağlantılar</div>
+                            <div class="instruction-text">
+                                Hücreler arasındaki işaretler ilişkiyi gösterir:
+                            </div>
+                            <div class="rule-example">
+                                <span class="constraint-example">
+                                    <span class="theme-symbol-0" style="font-size: 1.1em;">🐰</span>
+                                    <strong>=</strong>
+                                    <span class="theme-symbol-0" style="font-size: 1.1em;">🐰</span>
+                                </span>
+                                <span class="rule-status valid">Aynı olmalı</span>
+                            </div>
+                            <div class="rule-example">
+                                <span class="constraint-example">
+                                    <span class="theme-symbol-0" style="font-size: 1.1em;">🐰</span>
+                                    <strong>×</strong>
+                                    <span class="theme-symbol-1" style="font-size: 1.1em;">🐢</span>
+                                </span>
+                                <span class="rule-status valid">Farklı olmalı</span>
+                            </div>
+                        </div>
+
+                        <div class="instruction-section">
+                            <div class="instruction-title">💡 İpucu</div>
+                            <div class="instruction-text">
+                                Başlangıçta verilen semboller değiştirilemez. Boş hücrelere tıklayarak sembolleri yerleştirin.
+                            </div>
+                            <div class="penalty-info">
+                                ⏱️ Her ipucu +3 saniye ekler.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="daily-info" id="dailyInfo"></div>
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settingsModal">
-        <button class="close-settings" onclick="toggleSettings()">×</button>
-        <h2 class="settings-title">Tema Seçimi</h2>
+    <div class="modal settings-modal" id="settingsModal">
+        <button class="close-modal-btn" onclick="toggleSettings()">×</button>
+        <h2 class="modal-title">Tema Seçimi</h2>
         <div class="theme-options">
-            <button class="theme-btn active" onclick="selectTheme('default')" id="theme-default">
+            <button class="theme-btn" onclick="selectTheme('default')" id="theme-default">
                 <span>Klasik</span>
                 <span class="theme-symbols">🐰 🐢</span>
+            </button>
+            <button class="theme-btn active" onclick="selectTheme('matchday')" id="theme-matchday">
+                <span>Match Day</span>
+                <span class="theme-symbols">🍔 🍟</span>
             </button>
             <button class="theme-btn" onclick="selectTheme('galatasaray')" id="theme-galatasaray">
                 <span>Galatasaray</span>
@@ -798,251 +1257,831 @@
                 <span>Beşiktaş</span>
                 <span class="theme-symbols">🦅 ⚫</span>
             </button>
+            <button class="theme-btn" onclick="selectTheme('summerheat')" id="theme-summerheat">
+                <span>Yaz Sıcağı</span>
+                <span class="theme-symbols">🍦 🍨</span>
+            </button>
         </div>
     </div>
 
-    <div class="overlay" id="overlay" onclick="closeOverlay()"></div>
-    
-    <div class="statistics-sheet" id="statisticsSheet">
-        <div class="sheet-handle"></div>
-        <h2 class="stats-title">🎉 Tebrikler! 🎉</h2>
+    <div class="modal victory-modal" id="victoryModal">
+        <button class="close-modal-btn" onclick="closeVictory()">×</button>
+        
+        <!-- Special Reward Section (Matchday Theme Only) -->
+        <div class="reward-section" id="rewardSection" style="display: none;">
+            <div class="reward-content">
+                <div class="reward-icon">🍟</div>
+                <h3 class="reward-title">Tebrikler, Kupon kodu senindir!</h3>
+                <div class="reward-code-container">
+                    <div class="reward-code-box">
+                        <span class="reward-code" id="rewardCode">DUO100</span>
+                        <button class="copy-btn" onclick="copyRewardCode()">
+                            <span class="copy-icon">📋</span>
+                            <span class="copy-text">Kopyala</span>
+                        </button>
+                    </div>
+                </div>
+                <button class="reward-cta-btn" onclick="openMcDonaldsApp()">
+                    <span style="position: relative; z-index: 1;">Hemen kullanmak için McDonald's uygulamasını indir</span>
+                </button>
+            </div>
+        </div>
+        
+        <h2 class="modal-title">🎉 Tebrikler! 🎉</h2>
         
         <div class="stats-grid">
             <div class="stat-item">
+                <div class="stat-value">1:32</div>
+                <div class="stat-label">Bugünkü Ortalama Süre</div>
+            </div>
+            <div class="stat-item">
                 <div class="stat-value" id="statTime">00:00</div>
-                <div class="stat-label">Süre</div>
+                <div class="stat-label">Sizin Süreniz</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="statMoves">0</div>
-                <div class="stat-label">Hamle Sayısı</div>
+            <div class="stat-item full-width highlight">
+                <div class="stat-value" id="statPercentile">-</div>
+                <div class="stat-label">🏆 Bugünkü oyunculardan daha hızlısınız!</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="statErrors">0</div>
-                <div class="stat-label">Hata Sayısı</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="statHints">0</div>
-                <div class="stat-label">İpucu Kullanımı</div>
+            <div class="stat-item full-width" style="font-size: 0.9em;">
+                <span style="color: rgba(255, 255, 255, 0.7);">İpucu Kullanımı: </span>
+                <span id="statHints" style="font-weight: 700; color: white;">0</span>
             </div>
         </div>
 
-        <div class="percentile-card">
-            <div class="percentile-title">Oyuncuların</div>
-            <div class="percentile-value" id="percentileValue">%0</div>
-            <div class="percentile-message" id="percentileMessage">'sinden daha iyisin!</div>
-            <div class="percentile-visual">
-                <div class="percentile-fill" id="percentileFill" style="width: 0%"></div>
-            </div>
+        <!-- Banner Area 4:3 Ratio -->
+        <div class="stats-banner" id="statsBanner" onclick="handleBannerClick()">
+            <img src="" alt="" id="statsBannerImage">
         </div>
 
-        <div id="achievements"></div>
+        <div class="theme-leaderboard">
+            <h3>Günün Tema Sıralaması</h3>
+            <div id="themeRanking"></div>
+        </div>
 
-        <button class="play-again-btn" onclick="newGame(); closeStatistics();">Yeni Oyun</button>
+        <button class="play-again-btn" onclick="closeVictory();">Yarının Oyununu Bekle</button>
     </div>
 
+    <div class="overlay" id="overlay" onclick="closeOverlay()"></div>
+
     <script>
-        let currentTheme = 'default';
+        /* ========================================
+           BANNER CONFIGURATION
+           Configure your banner image below
+           ======================================== */
+        
+        // Banner configuration - Add your image URL here
+        const STATS_BANNER_IMAGE_URL = ''; // Required: 'https://example.com/banner.jpg'
+        // The banner will display with a 4:3 aspect ratio (e.g., 800x600, 1200x900)
+        const STATS_BANNER_LINK_URL = ''; // Optional: Add a URL to make the banner clickable
+        const STATS_BANNER_ALT_TEXT = 'Promotional Banner'; // Optional: Alt text for accessibility
+
+        // McDonald's App URL Configuration
+        const MCDONALDS_APP_URL = 'https://siparis.mcdonalds.com.tr/en?gclsrc=aw.ds&gad_source=1&gad_campaignid=21662535320&gbraid=0AAAAAD5joUtSuR5CqlOMggRRnL3FEFoEo&gclid=CjwKCAjw1ozEBhAdEiwAn9qbza1AdYWevAJ4a9c0_4EL6gZePBIysrTyxrxWwjiFeHuMXzjyCw6CKxoCGbUQAvD_BwE'; // Configure McDonald's app link
+
+        /* ======================================== */
+
+        let currentTheme = 'matchday'; // Changed default theme to matchday
         let gameBoard = [];
         let solution = [];
         let fixedCells = [];
         let constraints = [];
-        let moveCount = 0;
-        let errorCount = 0;
         let hintCount = 0;
         let startTime = null;
         let timerInterval = null;
         let errorCells = new Set();
+        let wrongHintCells = new Set();
+        let dailyGameSeed = null;
+        let moveHistory = [];
+        let gameCompleted = false; // New flag for game completion
+        let totalPenaltyTime = 0; // Track total penalty time
 
         const themes = {
-            default: {
-                name: 'Klasik',
-                symbols: ['🐰', '🐢'],
-                colors: ['#4CAF50', '#2196F3']
-            },
-            galatasaray: {
-                name: 'Galatasaray',
-                symbols: ['🦁', '⭐'],
-                colors: ['#a90432', '#fdb912']
-            },
-            fenerbahce: {
-                name: 'Fenerbahçe',
-                symbols: ['🐤', '⚓'],
-                colors: ['#003f7f', '#ffdf00']
-            },
-            besiktas: {
-                name: 'Beşiktaş',
-                symbols: ['🦅', '⚫'],
-                colors: ['#000000', '#ffffff']
-            }
+            default: { name: 'Klasik', symbols: ['🐰', '🐢'] },
+            matchday: { name: 'Match Day', symbols: ['🍔', '🍟'] },
+            galatasaray: { name: 'Galatasaray', symbols: ['🦁', '⭐'] },
+            fenerbahce: { name: 'Fenerbahçe', symbols: ['🐤', '⚓'] },
+            besiktas: { name: 'Beşiktaş', symbols: ['🦅', '⚫'] },
+            summerheat: { name: 'Yaz Sıcağı', symbols: ['🍦', '🍨'] }
         };
 
-        // Initialize game on load
+        // Prevent zoom on iOS
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // Seeded random number generator
+        class SeededRandom {
+            constructor(seed) {
+                this.seed = seed;
+            }
+
+            next() {
+                this.seed = (this.seed * 9301 + 49297) % 233280;
+                return this.seed / 233280;
+            }
+
+            nextInt(min, max) {
+                return Math.floor(this.next() * (max - min + 1)) + min;
+            }
+
+            shuffle(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(this.next() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+        }
+
+        function openMcDonaldsApp() {
+            // Use the configured McDonald's app URL
+            window.open(MCDONALDS_APP_URL, '_blank');
+        }
+
+        function copyRewardCode() {
+            const codeText = document.getElementById('rewardCode').textContent;
+            const copyBtn = document.querySelector('.copy-btn');
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(codeText).then(() => {
+                // Update button to show success
+                copyBtn.classList.add('copied');
+                copyBtn.querySelector('.copy-text').textContent = 'Kopyalandı!';
+                copyBtn.querySelector('.copy-icon').textContent = '✓';
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.querySelector('.copy-text').textContent = 'Kopyala';
+                    copyBtn.querySelector('.copy-icon').textContent = '📋';
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = codeText;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Show success
+                copyBtn.classList.add('copied');
+                copyBtn.querySelector('.copy-text').textContent = 'Kopyalandı!';
+                copyBtn.querySelector('.copy-icon').textContent = '✓';
+                
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.querySelector('.copy-text').textContent = 'Kopyala';
+                    copyBtn.querySelector('.copy-icon').textContent = '📋';
+                }, 2000);
+            });
+        }
+
+        function handleBannerClick() {
+            if (STATS_BANNER_LINK_URL) {
+                window.open(STATS_BANNER_LINK_URL, '_blank');
+            }
+        }
+
+        function updateInstructionSymbols() {
+            // Update all instruction symbols to match current theme
+            document.querySelectorAll('.theme-symbol-0').forEach(el => {
+                el.textContent = themes[currentTheme].symbols[0];
+            });
+            document.querySelectorAll('.theme-symbol-1').forEach(el => {
+                el.textContent = themes[currentTheme].symbols[1];
+            });
+        }
+
+        function toggleInstructions() {
+            const content = document.getElementById('instructionsContent');
+            const toggle = document.getElementById('instructionsToggle');
+            
+            content.classList.toggle('open');
+            toggle.classList.toggle('open');
+            
+            // Reset scroll position when closing
+            if (!content.classList.contains('open')) {
+                content.removeEventListener('scroll', updateInstructionShadows);
+                setTimeout(() => {
+                    content.scrollTop = 0;
+                    content.style.boxShadow = '';
+                }, 300);
+            } else {
+                // Add scroll listener to update shadows
+                content.addEventListener('scroll', updateInstructionShadows);
+                setTimeout(updateInstructionShadows, 100);
+            }
+        }
+
+        function updateInstructionShadows() {
+            const content = document.getElementById('instructionsContent');
+            const isAtTop = content.scrollTop <= 0;
+            const isAtBottom = content.scrollTop + content.clientHeight >= content.scrollHeight - 1;
+            
+            if (isAtTop && isAtBottom) {
+                content.style.boxShadow = 'none';
+            } else if (isAtTop) {
+                content.style.boxShadow = 'inset 0 -10px 10px -10px rgba(0, 0, 0, 0.3)';
+            } else if (isAtBottom) {
+                content.style.boxShadow = 'inset 0 10px 10px -10px rgba(0, 0, 0, 0.3)';
+            } else {
+                content.style.boxShadow = 'inset 0 10px 10px -10px rgba(0, 0, 0, 0.3), inset 0 -10px 10px -10px rgba(0, 0, 0, 0.3)';
+            }
+        }
+
+        function clearBoard() {
+            // Clear all non-fixed cells
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 6; j++) {
+                    if (!fixedCells[i][j]) {
+                        gameBoard[i][j] = null;
+                    }
+                }
+            }
+            
+            errorCells.clear();
+            wrongHintCells.clear();
+            moveHistory = [];
+            renderBoard();
+            saveGameState();
+        }
+
+        function undoMove() {
+            if (moveHistory.length === 0 || gameCompleted) return;
+            
+            const lastMove = moveHistory.pop();
+            gameBoard[lastMove.row][lastMove.col] = lastMove.previousValue;
+            
+            errorCells.clear();
+            wrongHintCells.clear();
+            checkAllRules();
+            renderBoard();
+            saveGameState();
+        }
+
         window.onload = function() {
-            newGame();
+            initializeDailyGame();
+            checkStatsButtonVisibility();
         };
+
+        function initializeDailyGame() {
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            dailyGameSeed = hashCode(dateStr);
+            
+            // Check if user already completed today's game
+            const savedData = localStorage.getItem('duoGameState');
+            if (savedData) {
+                const state = JSON.parse(savedData);
+                if (state.date === dateStr && state.completed) {
+                    // Show completed state
+                    gameCompleted = true;
+                    document.getElementById('dailyInfo').textContent = "Bugünün oyununu tamamladınız! Yarın yeni bir oyun sizi bekliyor.";
+                    document.getElementById('statsBtn').style.display = 'inline-block';
+                    loadGameState(state);
+                    return;
+                } else if (state.date === dateStr && !state.completed) {
+                    // Resume today's game
+                    gameCompleted = false;
+                    loadGameState(state);
+                    return;
+                }
+            }
+            
+            // New day, generate new game
+            gameCompleted = false;
+            newGame();
+            updateDailyInfo();
+        }
+
+        function hashCode(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
+
+        function updateDailyInfo() {
+            const today = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const dateStr = today.toLocaleDateString('tr-TR', options);
+            document.getElementById('dailyInfo').textContent = `Günün Oyunu: ${dateStr}`;
+        }
+
+        function saveGameState() {
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            
+            const state = {
+                date: dateStr,
+                gameBoard: gameBoard,
+                solution: solution,
+                fixedCells: fixedCells,
+                constraints: constraints,
+                hintCount: hintCount,
+                startTime: startTime,
+                completed: gameCompleted,
+                theme: currentTheme,
+                moveHistory: moveHistory,
+                totalPenaltyTime: totalPenaltyTime
+            };
+            
+            localStorage.setItem('duoGameState', JSON.stringify(state));
+        }
+
+        function saveDailyScore(timeInSeconds, hints) {
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            
+            // Get existing scores for today
+            let dailyScores = JSON.parse(localStorage.getItem('duoDailyScores') || '{}');
+            if (!dailyScores[dateStr]) {
+                dailyScores[dateStr] = [];
+            }
+            
+            // Add this score
+            dailyScores[dateStr].push({
+                time: timeInSeconds,
+                hints: hints,
+                score: calculateScore(timeInSeconds, hints)
+            });
+            
+            // Clean up old data (keep only last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            Object.keys(dailyScores).forEach(date => {
+                const dateParts = date.split('-');
+                const scoreDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                if (scoreDate < thirtyDaysAgo) {
+                    delete dailyScores[date];
+                }
+            });
+            
+            localStorage.setItem('duoDailyScores', JSON.stringify(dailyScores));
+            
+            // Also clean up old saved stats
+            let savedStats = JSON.parse(localStorage.getItem('duoSavedStats') || '{}');
+            Object.keys(savedStats).forEach(date => {
+                const dateParts = date.split('-');
+                const statsDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+                if (statsDate < thirtyDaysAgo) {
+                    delete savedStats[date];
+                }
+            });
+            localStorage.setItem('duoSavedStats', JSON.stringify(savedStats));
+        }
+
+        function calculateScore(timeInSeconds, hints) {
+            // Lower score is better
+            // Base score is time, with penalty for hints
+            return timeInSeconds + (hints * 30); // 30 second penalty per hint
+        }
+
+        function getPercentileRank(myTime) {
+            // Fixed average time is 1:32 (92 seconds)
+            const avgTime = 92;
+            
+            // Calculate how much better/worse the player is
+            const difference = avgTime - myTime;
+            
+            // Convert to percentage
+            // If player is 20 seconds faster, they're about 22% better
+            // If player is 20 seconds slower, they're about 22% worse
+            let percentage = Math.round((difference / avgTime) * 100);
+            
+            // Ensure percentage is between -99 and 99
+            percentage = Math.max(-99, Math.min(99, percentage));
+            
+            return percentage;
+        }
+
+        function getThemeLeaderboard(currentTheme) {
+            // Mock data for theme performance
+            const themes = [
+                { key: 'matchday', name: 'Match Day', emoji: '🍔', avgTime: 115 },
+                { key: 'default', name: 'Klasik', emoji: '🐰', avgTime: 125 },
+                { key: 'galatasaray', name: 'Galatasaray', emoji: '🦁', avgTime: 142 },
+                { key: 'fenerbahce', name: 'Fenerbahçe', emoji: '🐤', avgTime: 118 },
+                { key: 'besiktas', name: 'Beşiktaş', emoji: '🦅', avgTime: 156 },
+                { key: 'summerheat', name: 'Yaz Sıcağı', emoji: '🍦', avgTime: 134 }
+            ];
+            
+            // Use daily seed for consistent daily rankings
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            const seed = hashCode(dateStr + 'theme-leaderboard');
+            const rng = new SeededRandom(seed);
+            
+            // Add some randomness to make it more realistic (±30 seconds)
+            themes.forEach(theme => {
+                const variation = rng.nextInt(-30, 30);
+                theme.avgTime += variation;
+                theme.avgTime = Math.max(60, Math.min(300, theme.avgTime)); // Between 1-5 minutes
+            });
+            
+            // Sort by average time (fastest first)
+            themes.sort((a, b) => a.avgTime - b.avgTime);
+            
+            return themes;
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function renderThemeLeaderboard() {
+            const leaderboard = getThemeLeaderboard(currentTheme);
+            const container = document.getElementById('themeRanking');
+            container.innerHTML = '';
+            
+            leaderboard.forEach((theme, index) => {
+                const rank = document.createElement('div');
+                rank.className = 'theme-rank';
+                
+                // Add special styling for top 3
+                if (index === 0) rank.classList.add('gold');
+                else if (index === 1) rank.classList.add('silver');
+                else if (index === 2) rank.classList.add('bronze');
+                
+                // Highlight current theme
+                const isCurrentTheme = theme.key === currentTheme;
+                if (isCurrentTheme) rank.classList.add('current-theme');
+                
+                // Add crown for first place
+                const positionDisplay = index === 0 ? '👑' : `${index + 1}`;
+                
+                rank.innerHTML = `
+                    <div class="theme-info">
+                        <div class="theme-position">${positionDisplay}</div>
+                        <div class="theme-emoji">${theme.emoji}</div>
+                        <div class="theme-name">${theme.name}${isCurrentTheme ? ' ⭐' : ''}</div>
+                    </div>
+                    <div class="theme-time">${formatTime(theme.avgTime)}</div>
+                `;
+                
+                container.appendChild(rank);
+            });
+        }
+
+        function loadGameState(state) {
+            gameBoard = state.gameBoard;
+            solution = state.solution;
+            fixedCells = state.fixedCells;
+            constraints = state.constraints;
+            hintCount = state.hintCount;
+            startTime = state.startTime || Date.now();
+            currentTheme = state.theme || 'matchday'; // Changed to matchday
+            moveHistory = state.moveHistory || [];
+            gameCompleted = state.completed || false;
+            totalPenaltyTime = state.totalPenaltyTime || 0;
+            
+            // Update theme button
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`theme-${currentTheme}`).classList.add('active');
+            
+            // Update instruction symbols
+            updateInstructionSymbols();
+            
+            renderBoard();
+            
+            if (!state.completed) {
+                // Resume timer
+                clearInterval(timerInterval);
+                timerInterval = setInterval(updateTimer, 1000);
+                updateTimer();
+            } else {
+                // Show stats button if game is completed
+                document.getElementById('statsBtn').style.display = 'inline-block';
+            }
+        }
 
         function toggleSettings() {
             const modal = document.getElementById('settingsModal');
             const overlay = document.getElementById('overlay');
-            
-            if (modal.classList.contains('show')) {
-                modal.classList.remove('show');
-                overlay.classList.remove('show');
-            } else {
-                modal.classList.add('show');
-                overlay.classList.add('show');
-            }
+            const isShowing = modal.classList.toggle('show');
+            overlay.classList.toggle('show', isShowing);
         }
 
         function selectTheme(theme) {
             currentTheme = theme;
-            
-            // Update body class
-            document.body.className = theme === 'default' ? '' : theme;
-            
-            // Update active theme button
-            document.querySelectorAll('.theme-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`theme-${theme}`).classList.add('active');
-            
-            // Re-render the board with new symbols
             renderBoard();
-            
-            // Close settings
+            updateInstructionSymbols();
+            saveGameState();
             toggleSettings();
         }
 
         function closeOverlay() {
             const settingsModal = document.getElementById('settingsModal');
-            const statsSheet = document.getElementById('statisticsSheet');
+            const victoryModal = document.getElementById('victoryModal');
+            const overlay = document.getElementById('overlay');
             
             if (settingsModal.classList.contains('show')) {
                 toggleSettings();
-            } else if (statsSheet.classList.contains('show')) {
-                closeStatistics();
             }
+            if (victoryModal.classList.contains('show')) {
+                closeVictory();
+            }
+        }
+
+        // Check if a puzzle has a unique solution
+        function hasUniqueSolution(board, fixed, constraints) {
+            let solutionCount = 0;
+            const testBoard = board.map(row => [...row]);
+            
+            function solvePuzzle() {
+                if (solutionCount > 1) return; // Early exit if multiple solutions found
+                
+                for (let i = 0; i < 6; i++) {
+                    for (let j = 0; j < 6; j++) {
+                        if (!fixed[i][j] && testBoard[i][j] === null) {
+                            for (const sym of [0, 1]) {
+                                testBoard[i][j] = sym;
+                                if (isValidPlacement(testBoard, i, j, constraints)) {
+                                    solvePuzzle();
+                                }
+                                testBoard[i][j] = null;
+                            }
+                            return;
+                        }
+                    }
+                }
+                
+                // Check if this is a complete valid solution
+                if (isBoardComplete(testBoard) && isBoardValid(testBoard, constraints)) {
+                    solutionCount++;
+                }
+            }
+            
+            solvePuzzle();
+            return solutionCount === 1;
+        }
+
+        function isBoardComplete(board) {
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 6; j++) {
+                    if (board[i][j] === null) return false;
+                }
+            }
+            return true;
+        }
+
+        function isBoardValid(board, constraints) {
+            // Check row and column counts
+            for (let i = 0; i < 6; i++) {
+                let rowCounts = [0, 0];
+                let colCounts = [0, 0];
+                for (let j = 0; j < 6; j++) {
+                    if (board[i][j] !== null) rowCounts[board[i][j]]++;
+                    if (board[j][i] !== null) colCounts[board[j][i]]++;
+                }
+                if (rowCounts[0] !== 3 || rowCounts[1] !== 3) return false;
+                if (colCounts[0] !== 3 || colCounts[1] !== 3) return false;
+            }
+            
+            // Check no three in a row
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (board[i][j] === board[i][j+1] && board[i][j] === board[i][j+2]) return false;
+                    if (board[j][i] === board[j+1][i] && board[j][i] === board[j+2][i]) return false;
+                }
+            }
+            
+            // Check constraints
+            for (const c of constraints) {
+                const r1 = c.row, c1 = c.col;
+                const r2 = c.type === 'horizontal' ? r1 : r1 + 1;
+                const c2 = c.type === 'horizontal' ? c1 + 1 : c1;
+                const v1 = board[r1][c1], v2 = board[r2][c2];
+                if ((v1 === v2) !== (c.constraint === '=')) return false;
+            }
+            
+            return true;
+        }
+
+        function isValidPlacement(board, r, c, constraints) {
+            const sym = board[r][c];
+            if (sym === null) return true;
+            
+            // Check row and column counts
+            let rowCount = 0, colCount = 0;
+            for (let i = 0; i < 6; i++) {
+                if (board[r][i] === sym) rowCount++;
+                if (board[i][c] === sym) colCount++;
+            }
+            if (rowCount > 3 || colCount > 3) return false;
+
+            // Check for three in a row
+            if (c > 1 && board[r][c-1] === sym && board[r][c-2] === sym) return false;
+            if (r > 1 && board[r-1][c] === sym && board[r-2][c] === sym) return false;
+            if (c > 0 && c < 5 && board[r][c-1] === sym && board[r][c+1] === sym) return false;
+            if (r > 0 && r < 5 && board[r-1][c] === sym && board[r+1][c] === sym) return false;
+            
+            // Check constraints that involve this cell
+            for (const con of constraints) {
+                const r1 = con.row, c1 = con.col;
+                const r2 = con.type === 'horizontal' ? r1 : r1 + 1;
+                const c2 = con.type === 'horizontal' ? c1 + 1 : c1;
+                
+                if ((r === r1 && c === c1) || (r === r2 && c === c2)) {
+                    const v1 = board[r1][c1], v2 = board[r2][c2];
+                    if (v1 !== null && v2 !== null && ((v1 === v2) !== (con.constraint === '='))) {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
         }
 
         function generatePuzzle() {
-            // Initialize empty board
-            gameBoard = Array(6).fill(null).map(() => Array(6).fill(null));
-            fixedCells = Array(6).fill(null).map(() => Array(6).fill(false));
-            constraints = [];
-            errorCells.clear();
-
-            // Generate a valid solution
-            solution = generateValidSolution();
+            let attempts = 0;
+            const maxAttempts = 50;
+            const rng = new SeededRandom(dailyGameSeed);
             
-            // Create constraints with proper placement
-            for (let i = 0; i < 6; i++) {
-                for (let j = 0; j < 6; j++) {
-                    // Add horizontal constraints (between cells, not at edges)
-                    if (j < 5 && Math.random() < 0.45) {
-                        const isEqual = solution[i][j] === solution[i][j + 1];
-                        constraints.push({
-                            type: 'horizontal',
-                            row: i,
-                            col: j,
-                            constraint: isEqual ? '=' : '×'
-                        });
+            do {
+                gameBoard = Array(6).fill(null).map(() => Array(6).fill(null));
+                fixedCells = Array(6).fill(null).map(() => Array(6).fill(false));
+                constraints = [];
+                errorCells.clear();
+                wrongHintCells.clear();
+                moveHistory = [];
+                solution = generateValidSolution(rng);
+                
+                // Generate constraints - maximum 10 constraints
+                const allPossibleConstraints = [];
+                for (let i = 0; i < 6; i++) {
+                    for (let j = 0; j < 6; j++) {
+                        if (j < 5) {
+                            allPossibleConstraints.push({ type: 'horizontal', row: i, col: j });
+                        }
+                        if (i < 5) {
+                            allPossibleConstraints.push({ type: 'vertical', row: i, col: j });
+                        }
                     }
+                }
+
+                // Use no more than 10 constraints
+                const shuffled = rng.shuffle(allPossibleConstraints);
+                const numConstraints = rng.nextInt(8, 10); // 8-10 constraints
+                const selectedConstraints = shuffled.slice(0, numConstraints);
+
+                constraints = selectedConstraints.map(c => {
+                    let val;
+                    if (c.type === 'horizontal') {
+                        val = solution[c.row][c.col] === solution[c.row][c.col + 1] ? '=' : '×';
+                    } else {
+                        val = solution[c.row][c.col] === solution[c.row + 1][c.col] ? '=' : '×';
+                    }
+                    return { ...c, constraint: val };
+                });
+
+                // Get cells involved in constraints
+                const constraintCells = new Set();
+                constraints.forEach(c => {
+                    constraintCells.add(`${c.row},${c.col}`);
+                    if (c.type === 'horizontal') {
+                        constraintCells.add(`${c.row},${c.col + 1}`);
+                    } else {
+                        constraintCells.add(`${c.row + 1},${c.col}`);
+                    }
+                });
+
+                // Reveal 8-9 cells, avoiding cells connected by constraints
+                let revealedCount = 0;
+                const targetRevealed = rng.nextInt(8, 9);
+                const maxRevealAttempts = 100;
+                let revealAttempts = 0;
+                
+                while (revealedCount < targetRevealed && revealAttempts < maxRevealAttempts) {
+                    const row = rng.nextInt(0, 5);
+                    const col = rng.nextInt(0, 5);
+                    revealAttempts++;
                     
-                    // Add vertical constraints (between cells, not at edges)
-                    if (i < 5 && Math.random() < 0.45) {
-                        const isEqual = solution[i][j] === solution[i + 1][j];
-                        constraints.push({
-                            type: 'vertical',
-                            row: i,
-                            col: j,
-                            constraint: isEqual ? '=' : '×'
+                    if (!fixedCells[row][col]) {
+                        // Check if this cell is connected to any already revealed cell via constraint
+                        let connectedToRevealed = false;
+                        
+                        constraints.forEach(c => {
+                            const r1 = c.row, c1 = c.col;
+                            const r2 = c.type === 'horizontal' ? r1 : r1 + 1;
+                            const c2 = c.type === 'horizontal' ? c1 + 1 : c1;
+                            
+                            if ((row === r1 && col === c1 && fixedCells[r2][c2]) ||
+                                (row === r2 && col === c2 && fixedCells[r1][c1])) {
+                                connectedToRevealed = true;
+                            }
                         });
+                        
+                        if (!connectedToRevealed) {
+                            gameBoard[row][col] = solution[row][col];
+                            fixedCells[row][col] = true;
+                            revealedCount++;
+                        }
                     }
                 }
-            }
-
-            // Ensure we have enough constraints for an interesting puzzle
-            if (constraints.length < 12) {
-                return generatePuzzle(); // Regenerate if too few constraints
-            }
-
-            // Reveal some cells as fixed
-            let revealedCount = 0;
-            const targetRevealed = 7 + Math.floor(Math.random() * 2); // 7 or 8 cells
-            while (revealedCount < targetRevealed) {
-                const row = Math.floor(Math.random() * 6);
-                const col = Math.floor(Math.random() * 6);
-                if (!fixedCells[row][col]) {
-                    gameBoard[row][col] = solution[row][col];
-                    fixedCells[row][col] = true;
-                    revealedCount++;
+                
+                // If we couldn't reveal enough cells without constraint connections, 
+                // reveal some anyway to meet the minimum
+                while (revealedCount < targetRevealed) {
+                    const row = rng.nextInt(0, 5);
+                    const col = rng.nextInt(0, 5);
+                    if (!fixedCells[row][col]) {
+                        gameBoard[row][col] = solution[row][col];
+                        fixedCells[row][col] = true;
+                        revealedCount++;
+                    }
                 }
+                
+                attempts++;
+                
+            } while (!hasUniqueSolution(gameBoard, fixedCells, constraints) && attempts < maxAttempts);
+            
+            // If we couldn't generate a unique solution puzzle, use the last attempt anyway
+            if (attempts >= maxAttempts) {
+                console.log("Warning: Could not generate a puzzle with unique solution in reasonable time");
             }
         }
 
-        function generateValidSolution() {
-            const solution = Array(6).fill(null).map(() => Array(6).fill(null));
+        function generateValidSolution(rng) {
+            const board = Array(6).fill(null).map(() => Array(6).fill(null));
             
-            function isValid(row, col, symbol) {
-                // Check horizontal consecutive constraint
-                let count = 1;
-                // Check left
-                for (let i = col - 1; i >= 0 && solution[row][i] === symbol; i--) count++;
-                // Check right
-                for (let i = col + 1; i < 6 && solution[row][i] === symbol; i++) count++;
-                if (count > 2) return false;
-                
-                // Check vertical consecutive constraint
-                count = 1;
-                // Check up
-                for (let i = row - 1; i >= 0 && solution[i][col] === symbol; i--) count++;
-                // Check down
-                for (let i = row + 1; i < 6 && solution[i][col] === symbol; i++) count++;
-                if (count > 2) return false;
-                
-                // Check row count
-                let rowCount = 0;
+            function solve() {
                 for (let i = 0; i < 6; i++) {
-                    if (solution[row][i] === symbol) rowCount++;
+                    for (let j = 0; j < 6; j++) {
+                        if (board[i][j] === null) {
+                            const symbols = rng.next() > 0.5 ? [0, 1] : [1, 0];
+                            for (const sym of symbols) {
+                                board[i][j] = sym;
+                                if (isPlacementValid(board, i, j, []) && solve()) {
+                                    return true;
+                                }
+                                board[i][j] = null;
+                            }
+                            return false;
+                        }
+                    }
                 }
-                if (rowCount >= 3) return false;
-                
-                // Check column count
-                let colCount = 0;
-                for (let i = 0; i < 6; i++) {
-                    if (solution[i][col] === symbol) colCount++;
-                }
-                if (colCount >= 3) return false;
-                
                 return true;
             }
             
-            function solve(row, col) {
-                if (row === 6) return true;
+            function isPlacementValid(board, r, c, constraints) {
+                const sym = board[r][c];
                 
-                const nextRow = col === 5 ? row + 1 : row;
-                const nextCol = col === 5 ? 0 : col + 1;
+                // Check row and column counts
+                let rowCount = 0, colCount = 0;
+                for (let i = 0; i < 6; i++) {
+                    if (board[r][i] === sym) rowCount++;
+                    if (board[i][c] === sym) colCount++;
+                }
+                if (rowCount > 3 || colCount > 3) return false;
+
+                // Check for three in a row
+                if (c > 1 && board[r][c-1] === sym && board[r][c-2] === sym) return false;
+                if (r > 1 && board[r-1][c] === sym && board[r-2][c] === sym) return false;
+                if (c > 0 && c < 5 && board[r][c-1] === sym && board[r][c+1] === sym) return false;
+                if (r > 0 && r < 5 && board[r-1][c] === sym && board[r+1][c] === sym) return false;
                 
-                const symbols = [0, 1];
-                // Shuffle for randomness
-                for (let i = symbols.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [symbols[i], symbols[j]] = [symbols[j], symbols[i]];
+                // Check complete rows/columns have exactly 3 of each
+                if (board[r].every(val => val !== null)) {
+                    let count0 = board[r].filter(v => v === 0).length;
+                    if (count0 !== 3) return false;
                 }
                 
-                for (const symbol of symbols) {
-                    if (isValid(row, col, symbol)) {
-                        solution[row][col] = symbol;
-                        if (solve(nextRow, nextCol)) return true;
-                        solution[row][col] = null;
+                let colFilled = true;
+                for (let i = 0; i < 6; i++) {
+                    if (board[i][c] === null) colFilled = false;
+                }
+                if (colFilled) {
+                    let count0 = 0;
+                    for (let i = 0; i < 6; i++) {
+                        if (board[i][c] === 0) count0++;
                     }
+                    if (count0 !== 3) return false;
                 }
-                
-                return false;
+
+                return true;
             }
             
-            solve(0, 0);
-            return solution;
+            solve();
+            return board;
         }
 
         function renderBoard() {
@@ -1053,14 +2092,10 @@
                 for (let j = 0; j < 6; j++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    
-                    if (fixedCells[i][j]) {
-                        cell.classList.add('fixed');
-                    }
-                    
-                    if (errorCells.has(`${i},${j}`)) {
-                        cell.classList.add('error');
-                    }
+                    if (fixedCells[i][j]) cell.classList.add('fixed');
+                    if (errorCells.has(`${i},${j}`)) cell.classList.add('error');
+                    if (wrongHintCells.has(`${i},${j}`)) cell.classList.add('wrong-hint');
+                    if (gameCompleted) cell.classList.add('game-completed');
                     
                     if (gameBoard[i][j] !== null) {
                         cell.textContent = themes[currentTheme].symbols[gameBoard[i][j]];
@@ -1069,129 +2104,108 @@
                     cell.dataset.row = i;
                     cell.dataset.col = j;
                     
-                    if (!fixedCells[i][j]) {
+                    if (!fixedCells[i][j] && !gameCompleted) {
                         cell.addEventListener('click', () => cellClick(i, j));
+                        cell.addEventListener('touchend', (e) => {
+                            e.preventDefault();
+                            cellClick(i, j);
+                        });
                     }
-                    
                     grid.appendChild(cell);
                 }
             }
             
-            // Add constraints between appropriate cells
             constraints.forEach(c => {
                 const cell = grid.children[c.row * 6 + c.col];
-                const constraint = document.createElement('div');
-                constraint.className = c.type === 'horizontal' ? 'constraint constraint-h' : 'constraint constraint-v';
-                constraint.textContent = c.constraint;
-                cell.appendChild(constraint);
+                if (cell) {
+                    const constraintEl = document.createElement('div');
+                    constraintEl.className = `constraint ${c.type === 'horizontal' ? 'constraint-h' : 'constraint-v'}`;
+                    constraintEl.textContent = c.constraint;
+                    cell.appendChild(constraintEl);
+                }
             });
         }
 
         function cellClick(row, col) {
-            if (fixedCells[row][col]) return;
+            if (fixedCells[row][col] || gameCompleted) return;
             
-            // Cycle through null -> 0 -> 1 -> null
-            if (gameBoard[row][col] === null) {
-                gameBoard[row][col] = 0;
-            } else if (gameBoard[row][col] === 0) {
-                gameBoard[row][col] = 1;
-            } else {
-                gameBoard[row][col] = null;
+            // Clear wrong hint highlighting when user interacts
+            wrongHintCells.clear();
+            
+            const prevValue = gameBoard[row][col];
+            
+            // Save move to history
+            moveHistory.push({
+                row: row,
+                col: col,
+                previousValue: prevValue
+            });
+            
+            gameBoard[row][col] = gameBoard[row][col] === null ? 0 : (gameBoard[row][col] === 0 ? 1 : null);
+            
+            checkAllRules();
+            renderBoard();
+            saveGameState();
+            
+            // Add bounce animation when symbol appears
+            if (prevValue === null && gameBoard[row][col] !== null) {
+                setTimeout(() => {
+                    const cellEl = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+                    if (cellEl) {
+                        cellEl.classList.add('symbol-appear');
+                        setTimeout(() => cellEl.classList.remove('symbol-appear'), 300);
+                    }
+                }, 50);
             }
             
-            moveCount++;
-            document.getElementById('moveCount').textContent = moveCount;
-            
-            // Check for errors
-            checkErrors();
-            
-            renderBoard();
-            
             if (checkVictory()) {
-                showStatistics();
+                showVictory();
             }
         }
 
-        function checkErrors() {
+        function checkAllRules() {
             errorCells.clear();
-            
-            // Check constraint violations
-            for (const c of constraints) {
-                if (c.type === 'horizontal') {
-                    const val1 = gameBoard[c.row][c.col];
-                    const val2 = gameBoard[c.row][c.col + 1];
-                    if (val1 !== null && val2 !== null) {
-                        const shouldBeEqual = c.constraint === '=';
-                        if ((val1 === val2) !== shouldBeEqual) {
-                            errorCells.add(`${c.row},${c.col}`);
-                            errorCells.add(`${c.row},${c.col + 1}`);
-                        }
-                    }
-                } else {
-                    const val1 = gameBoard[c.row][c.col];
-                    const val2 = gameBoard[c.row + 1][c.col];
-                    if (val1 !== null && val2 !== null) {
-                        const shouldBeEqual = c.constraint === '=';
-                        if ((val1 === val2) !== shouldBeEqual) {
-                            errorCells.add(`${c.row},${c.col}`);
-                            errorCells.add(`${c.row + 1},${c.col}`);
-                        }
-                    }
-                }
-            }
-            
-            // Check consecutive violations
+
             for (let i = 0; i < 6; i++) {
-                for (let j = 0; j < 4; j++) {
-                    // Horizontal check
-                    if (gameBoard[i][j] !== null && 
-                        gameBoard[i][j] === gameBoard[i][j + 1] && 
-                        gameBoard[i][j + 1] === gameBoard[i][j + 2]) {
-                        errorCells.add(`${i},${j}`);
-                        errorCells.add(`${i},${j + 1}`);
-                        errorCells.add(`${i},${j + 2}`);
-                    }
-                    
-                    // Vertical check
-                    if (gameBoard[j][i] !== null && 
-                        gameBoard[j][i] === gameBoard[j + 1][i] && 
-                        gameBoard[j + 1][i] === gameBoard[j + 2][i]) {
-                        errorCells.add(`${j},${i}`);
-                        errorCells.add(`${j + 1},${i}`);
-                        errorCells.add(`${j + 2},${i}`);
-                    }
-                }
-            }
-            
-            // Check count violations
-            for (let i = 0; i < 6; i++) {
-                let rowCount = [0, 0];
-                let colCount = [0, 0];
-                let rowCells = [[], []];
-                let colCells = [[], []];
-                
+                // Check row/column counts
+                let rowCounts = [0, 0], colCounts = [0, 0];
                 for (let j = 0; j < 6; j++) {
-                    if (gameBoard[i][j] !== null) {
-                        rowCount[gameBoard[i][j]]++;
-                        rowCells[gameBoard[i][j]].push(`${i},${j}`);
+                    if (gameBoard[i][j] !== null) rowCounts[gameBoard[i][j]]++;
+                    if (gameBoard[j][i] !== null) colCounts[gameBoard[j][i]]++;
+                }
+                if (rowCounts[0] > 3 || rowCounts[1] > 3) {
+                    for (let k = 0; k < 6; k++) {
+                        if (gameBoard[i][k] !== null) errorCells.add(`${i},${k}`);
                     }
-                    if (gameBoard[j][i] !== null) {
-                        colCount[gameBoard[j][i]]++;
-                        colCells[gameBoard[j][i]].push(`${j},${i}`);
+                }
+                if (colCounts[0] > 3 || colCounts[1] > 3) {
+                    for (let k = 0; k < 6; k++) {
+                        if (gameBoard[k][i] !== null) errorCells.add(`${k},${i}`);
                     }
                 }
                 
-                if (rowCount[0] > 3) rowCells[0].forEach(cell => errorCells.add(cell));
-                if (rowCount[1] > 3) rowCells[1].forEach(cell => errorCells.add(cell));
-                if (colCount[0] > 3) colCells[0].forEach(cell => errorCells.add(cell));
-                if (colCount[1] > 3) colCells[1].forEach(cell => errorCells.add(cell));
+                // Check three in a row
+                for (let j = 0; j < 4; j++) {
+                    if (gameBoard[i][j] !== null && gameBoard[i][j] === gameBoard[i][j+1] && gameBoard[i][j] === gameBoard[i][j+2]) {
+                        [j, j+1, j+2].forEach(k => errorCells.add(`${i},${k}`));
+                    }
+                    if (gameBoard[j][i] !== null && gameBoard[j][i] === gameBoard[j+1][i] && gameBoard[j][i] === gameBoard[j+2][i]) {
+                        [j, j+1, j+2].forEach(k => errorCells.add(`${k},${i}`));
+                    }
+                }
             }
-            
-            // Update error count
-            if (errorCells.size > 0) {
-                errorCount++;
-                document.getElementById('errorCount').textContent = errorCount;
-            }
+
+            // Check constraints
+            constraints.forEach(c => {
+                let r1 = c.row, c1 = c.col;
+                let r2 = c.type === 'horizontal' ? r1 : r1 + 1;
+                let c2 = c.type === 'horizontal' ? c1 + 1 : c1;
+                const v1 = gameBoard[r1][c1], v2 = gameBoard[r2][c2];
+                if (v1 !== null && v2 !== null && ((v1 === v2) !== (c.constraint === '='))) {
+                    errorCells.add(`${r1},${c1}`);
+                    errorCells.add(`${r2},${c2}`);
+                }
+            });
         }
 
         function checkVictory() {
@@ -1202,172 +2216,506 @@
                 }
             }
             
-            // Check if there are no errors
+            // Check counts
+            for (let i = 0; i < 6; i++) {
+                let rowCounts = [0, 0];
+                let colCounts = [0, 0];
+                for (let j = 0; j < 6; j++) {
+                    rowCounts[gameBoard[i][j]]++;
+                    colCounts[gameBoard[j][i]]++;
+                }
+                if (rowCounts[0] !== 3 || rowCounts[1] !== 3) return false;
+                if (colCounts[0] !== 3 || colCounts[1] !== 3) return false;
+            }
+            
+            checkAllRules();
             return errorCells.size === 0;
         }
 
-        function calculatePercentile(time, moves, errors, hints) {
-            // Simulated percentile calculation based on performance metrics
-            let score = 10000;
-            score -= time * 10; // Penalty for time
-            score -= moves * 50; // Penalty for moves
-            score -= errors * 200; // Penalty for errors
-            score -= hints * 300; // Penalty for hints
-            
-            // Convert to percentile (0-99)
-            let percentile = Math.max(0, Math.min(99, Math.floor((score / 10000) * 100)));
-            
-            // Adjust based on realistic distribution
-            if (errors === 0 && hints === 0) {
-                percentile = Math.max(percentile, 75); // Perfect play gets at least 75th percentile
-            }
-            if (time < 120 && errors === 0) {
-                percentile = Math.max(percentile, 85); // Fast perfect play
-            }
-            if (time < 90 && errors === 0 && hints === 0) {
-                percentile = 95 + Math.floor(Math.random() * 4); // Elite performance
-            }
-            
-            return percentile;
-        }
-
-        function showStatistics() {
+        function showVictory() {
             clearInterval(timerInterval);
+            gameCompleted = true;
             
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000) + totalPenaltyTime;
             const minutes = Math.floor(elapsed / 60);
             const seconds = elapsed % 60;
             const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
+            // Save the score
+            saveDailyScore(elapsed, hintCount);
+            
+            // Calculate statistics
+            const percentile = getPercentileRank(elapsed);
+            
+            // Update display
             document.getElementById('statTime').textContent = timeStr;
-            document.getElementById('statMoves').textContent = moveCount;
-            document.getElementById('statErrors').textContent = errorCount;
+            if (percentile > 0) {
+                document.getElementById('statPercentile').textContent = `%${percentile}`;
+                document.querySelector('#statPercentile + .stat-label').textContent = '🏆 Bugünkü oyunculardan daha hızlısınız!';
+            } else {
+                document.getElementById('statPercentile').textContent = `%${Math.abs(percentile)}`;
+                document.querySelector('#statPercentile + .stat-label').textContent = '🏆 Bugünkü oyunculardan daha yavaşsınız!';
+            }
             document.getElementById('statHints').textContent = hintCount;
             
-            // Calculate and display percentile
-            const percentile = calculatePercentile(elapsed, moveCount, errorCount, hintCount);
-            document.getElementById('percentileValue').textContent = `%${percentile}`;
-            document.getElementById('percentileMessage').textContent = `'sinden daha iyisin!`;
-            
-            // Animate percentile fill
-            setTimeout(() => {
-                document.getElementById('percentileFill').style.width = `${percentile}%`;
-            }, 300);
-            
-            // Generate achievements
-            const achievementsDiv = document.getElementById('achievements');
-            achievementsDiv.innerHTML = '';
-            
-            if (errorCount === 0) {
-                achievementsDiv.innerHTML += `
-                    <div class="achievement">
-                        <div class="achievement-icon">🏆</div>
-                        <div>
-                            <strong>Mükemmel!</strong><br>
-                            Hiç hata yapmadan tamamladın
-                        </div>
-                    </div>
-                `;
+            // Check for special reward (Matchday theme + under 60 seconds)
+            const rewardSection = document.getElementById('rewardSection');
+            const earnedReward = currentTheme === 'matchday' && elapsed < 60;
+            if (earnedReward) {
+                rewardSection.style.display = 'block';
+                // Extra golden confetti for reward
+                setTimeout(() => createGoldenConfetti(), 500);
+            } else {
+                rewardSection.style.display = 'none';
             }
             
-            if (elapsed < 120) {
-                achievementsDiv.innerHTML += `
-                    <div class="achievement">
-                        <div class="achievement-icon">⚡</div>
-                        <div>
-                            <strong>Hızlı Çözüm!</strong><br>
-                            2 dakikadan kısa sürede tamamladın
-                        </div>
-                    </div>
-                `;
+            // Set banner image if URL is provided
+            const bannerContainer = document.querySelector('.stats-banner');
+            const bannerImage = document.getElementById('statsBannerImage');
+            if (STATS_BANNER_IMAGE_URL) {
+                bannerImage.src = STATS_BANNER_IMAGE_URL;
+                bannerImage.alt = STATS_BANNER_ALT_TEXT;
+                bannerContainer.classList.add('has-image');
+                bannerContainer.classList.add('visible');
+            } else {
+                bannerContainer.classList.remove('has-image');
+                bannerContainer.classList.remove('visible');
             }
             
-            if (hintCount === 0) {
-                achievementsDiv.innerHTML += `
-                    <div class="achievement">
-                        <div class="achievement-icon">🧠</div>
-                        <div>
-                            <strong>Usta Çözücü!</strong><br>
-                            İpucu kullanmadan tamamladın
-                        </div>
-                    </div>
-                `;
+            // Add clickable class if link is provided
+            if (STATS_BANNER_LINK_URL && STATS_BANNER_IMAGE_URL) {
+                bannerContainer.classList.add('clickable');
+            } else {
+                bannerContainer.classList.remove('clickable');
             }
             
-            if (percentile >= 90) {
-                achievementsDiv.innerHTML += `
-                    <div class="achievement">
-                        <div class="achievement-icon">👑</div>
-                        <div>
-                            <strong>Elit Oyuncu!</strong><br>
-                            En iyi %10'luk dilimdesin
-                        </div>
-                    </div>
-                `;
-            }
+            // Save stats for later viewing
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            const savedStats = JSON.parse(localStorage.getItem('duoSavedStats') || '{}');
+            savedStats[dateStr] = {
+                time: timeStr,
+                percentile: percentile,
+                hints: hintCount,
+                earnedReward: earnedReward,
+                theme: currentTheme
+            };
+            localStorage.setItem('duoSavedStats', JSON.stringify(savedStats));
+            
+            // Render theme leaderboard
+            renderThemeLeaderboard();
+            
+            // Mark game as completed
+            const savedData = JSON.parse(localStorage.getItem('duoGameState') || '{}');
+            savedData.completed = true;
+            localStorage.setItem('duoGameState', JSON.stringify(savedData));
+            
+            // Show stats button
+            document.getElementById('statsBtn').style.display = 'inline-block';
             
             document.getElementById('overlay').classList.add('show');
-            document.getElementById('statisticsSheet').classList.add('show');
+            document.getElementById('victoryModal').classList.add('show');
+            
+            // Add confetti effect
+            createConfetti();
         }
 
-        function closeStatistics() {
+        function checkStatsButtonVisibility() {
+            const savedData = localStorage.getItem('duoGameState');
+            if (savedData) {
+                const state = JSON.parse(savedData);
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+                
+                if (state.date === dateStr && state.completed) {
+                    document.getElementById('statsBtn').style.display = 'inline-block';
+                }
+            }
+        }
+
+        function showStats() {
+            // If stats modal is already open, close it
+            if (document.getElementById('victoryModal').classList.contains('show')) {
+                closeVictory();
+                return;
+            }
+            
+            const savedData = localStorage.getItem('duoGameState');
+            if (savedData) {
+                const state = JSON.parse(savedData);
+                const today = new Date();
+                const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+                
+                if (state.date === dateStr && state.completed) {
+                    // Reload stats from saved data
+                    const savedStats = JSON.parse(localStorage.getItem('duoSavedStats') || '{}');
+                    if (savedStats[dateStr]) {
+                        document.getElementById('statTime').textContent = savedStats[dateStr].time;
+                        const percentile = savedStats[dateStr].percentile;
+                        if (percentile > 0) {
+                            document.getElementById('statPercentile').textContent = `%${percentile}`;
+                            document.querySelector('#statPercentile + .stat-label').textContent = '🏆 Bugünkü oyunculardan daha hızlısınız!';
+                        } else {
+                            document.getElementById('statPercentile').textContent = `%${Math.abs(percentile)}`;
+                            document.querySelector('#statPercentile + .stat-label').textContent = '🏆 Bugünkü oyunculardan daha yavaşsınız!';
+                        }
+                        document.getElementById('statHints').textContent = savedStats[dateStr].hints;
+                        
+                        // Show reward section if it was earned
+                        const rewardSection = document.getElementById('rewardSection');
+                        if (savedStats[dateStr].earnedReward) {
+                            rewardSection.style.display = 'block';
+                        } else {
+                            rewardSection.style.display = 'none';
+                        }
+                        
+                        // Set banner image if URL is provided
+                        const bannerContainer = document.querySelector('.stats-banner');
+                        const bannerImage = document.getElementById('statsBannerImage');
+                        if (STATS_BANNER_IMAGE_URL) {
+                            bannerImage.src = STATS_BANNER_IMAGE_URL;
+                            bannerImage.alt = STATS_BANNER_ALT_TEXT;
+                            bannerContainer.classList.add('has-image');
+                            bannerContainer.classList.add('visible');
+                        } else {
+                            bannerContainer.classList.remove('has-image');
+                            bannerContainer.classList.remove('visible');
+                        }
+                        
+                        // Add clickable class if link is provided
+                        if (STATS_BANNER_LINK_URL && STATS_BANNER_IMAGE_URL) {
+                            bannerContainer.classList.add('clickable');
+                        } else {
+                            bannerContainer.classList.remove('clickable');
+                        }
+                        
+                        // Render theme leaderboard
+                        renderThemeLeaderboard();
+                        
+                        // Show modal
+                        document.getElementById('overlay').classList.add('show');
+                        document.getElementById('victoryModal').classList.add('show');
+                    }
+                }
+            }
+        }
+
+        function closeVictory() {
             document.getElementById('overlay').classList.remove('show');
-            document.getElementById('statisticsSheet').classList.remove('show');
+            document.getElementById('victoryModal').classList.remove('show');
+            
+            // Remove any leftover confetti
+            document.querySelectorAll('.confetti-piece').forEach(el => el.remove());
         }
 
         function newGame() {
-            moveCount = 0;
-            errorCount = 0;
+            // Check if today's game is already completed
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            const savedData = localStorage.getItem('duoGameState');
+            
+            if (savedData) {
+                const state = JSON.parse(savedData);
+                if (state.date === dateStr && state.completed) {
+                    return; // Don't allow new game if today's is completed
+                }
+            }
+            
             hintCount = 0;
-            document.getElementById('moveCount').textContent = '0';
-            document.getElementById('errorCount').textContent = '0';
-            closeStatistics();
+            totalPenaltyTime = 0;
+            gameCompleted = false;
+            closeVictory();
+            
+            // Hide stats button for new game
+            document.getElementById('statsBtn').style.display = 'none';
             
             generatePuzzle();
             renderBoard();
+            updateInstructionSymbols();
             
             startTime = Date.now();
             clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+            
+            saveGameState();
         }
 
         function updateTimer() {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000) + totalPenaltyTime;
             const minutes = Math.floor(elapsed / 60);
             const seconds = elapsed % 60;
-            document.getElementById('timer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function showTimePenalty() {
+            const hintBtn = document.getElementById('hintBtn');
+            
+            // Create penalty popup
+            const penalty = document.createElement('div');
+            penalty.className = 'time-penalty';
+            penalty.textContent = '+3s';
+            hintBtn.appendChild(penalty);
+            
+            // Remove after animation
+            setTimeout(() => {
+                penalty.remove();
+            }, 1500);
         }
 
         function getHint() {
-            hintCount++;
+            if (gameCompleted) return;
             
-            // Find an empty cell that we can fill correctly
+            // Add time penalty
+            totalPenaltyTime += 3;
+            showTimePenalty();
+            saveGameState();
+            
+            // Clear previous wrong hint highlighting
+            wrongHintCells.clear();
+            
+            // Find cells that can be determined by logic
+            let hintFound = false;
+            
+            // Check for full but incorrect rows/columns first
             for (let i = 0; i < 6; i++) {
+                // Check rows
+                let rowEmpty = 0, rowCounts = [0, 0];
                 for (let j = 0; j < 6; j++) {
-                    if (gameBoard[i][j] === null && !fixedCells[i][j]) {
-                        // Fill with the correct answer
-                        gameBoard[i][j] = solution[i][j];
-                        
-                        const cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`);
-                        cell.classList.add('success');
-                        setTimeout(() => cell.classList.remove('success'), 1000);
-                        
-                        moveCount++;
-                        document.getElementById('moveCount').textContent = moveCount;
-                        
-                        checkErrors();
-                        renderBoard();
-                        
-                        if (checkVictory()) {
-                            showStatistics();
+                    if (gameBoard[i][j] === null) rowEmpty++;
+                    else rowCounts[gameBoard[i][j]]++;
+                }
+                
+                if (rowEmpty === 0 && (rowCounts[0] !== 3 || rowCounts[1] !== 3)) {
+                    // Row is full but incorrect - highlight wrong cells
+                    for (let j = 0; j < 6; j++) {
+                        if (!fixedCells[i][j] && gameBoard[i][j] !== solution[i][j]) {
+                            wrongHintCells.add(`${i},${j}`);
+                            hintFound = true;
                         }
-                        return;
+                    }
+                }
+                
+                // Check columns
+                let colEmpty = 0, colCounts = [0, 0];
+                for (let j = 0; j < 6; j++) {
+                    if (gameBoard[j][i] === null) colEmpty++;
+                    else colCounts[gameBoard[j][i]]++;
+                }
+                
+                if (colEmpty === 0 && (colCounts[0] !== 3 || colCounts[1] !== 3)) {
+                    // Column is full but incorrect - highlight wrong cells
+                    for (let j = 0; j < 6; j++) {
+                        if (!fixedCells[j][i] && gameBoard[j][i] !== solution[j][i]) {
+                            wrongHintCells.add(`${j},${i}`);
+                            hintFound = true;
+                        }
                     }
                 }
             }
             
-            alert('Tüm hücreler dolu!');
+            if (hintFound) {
+                hintCount++;
+                renderBoard();
+                saveGameState();
+                return;
+            }
+            
+            // Priority 1: Complete rows/columns with 2 of one symbol
+            for (let i = 0; i < 6; i++) {
+                let rowCounts = [0, 0], colCounts = [0, 0];
+                let rowEmpty = [], colEmpty = [];
+                
+                for (let j = 0; j < 6; j++) {
+                    if (gameBoard[i][j] !== null) {
+                        rowCounts[gameBoard[i][j]]++;
+                    } else {
+                        rowEmpty.push(j);
+                    }
+                    
+                    if (gameBoard[j][i] !== null) {
+                        colCounts[gameBoard[j][i]]++;
+                    } else {
+                        colEmpty.push(j);
+                    }
+                }
+                
+                // If one symbol has 3, fill empty cells with the other
+                if (rowCounts[0] === 3 && rowEmpty.length > 0) {
+                    const j = rowEmpty[0];
+                    if (!fixedCells[i][j]) {
+                        gameBoard[i][j] = 1;
+                        animateHint(i, j);
+                        hintFound = true;
+                        break;
+                    }
+                } else if (rowCounts[1] === 3 && rowEmpty.length > 0) {
+                    const j = rowEmpty[0];
+                    if (!fixedCells[i][j]) {
+                        gameBoard[i][j] = 0;
+                        animateHint(i, j);
+                        hintFound = true;
+                        break;
+                    }
+                }
+                
+                if (!hintFound && colCounts[0] === 3 && colEmpty.length > 0) {
+                    const j = colEmpty[0];
+                    if (!fixedCells[j][i]) {
+                        gameBoard[j][i] = 1;
+                        animateHint(j, i);
+                        hintFound = true;
+                        break;
+                    }
+                } else if (!hintFound && colCounts[1] === 3 && colEmpty.length > 0) {
+                    const j = colEmpty[0];
+                    if (!fixedCells[j][i]) {
+                        gameBoard[j][i] = 0;
+                        animateHint(j, i);
+                        hintFound = true;
+                        break;
+                    }
+                }
+            }
+            
+            // Priority 2: Prevent three in a row
+            if (!hintFound) {
+                for (let i = 0; i < 6 && !hintFound; i++) {
+                    for (let j = 0; j < 6 && !hintFound; j++) {
+                        if (gameBoard[i][j] === null && !fixedCells[i][j]) {
+                            // Check horizontal patterns
+                            if (j > 1 && gameBoard[i][j-1] !== null && gameBoard[i][j-1] === gameBoard[i][j-2]) {
+                                gameBoard[i][j] = 1 - gameBoard[i][j-1];
+                                animateHint(i, j);
+                                hintFound = true;
+                            } else if (j < 4 && gameBoard[i][j+1] !== null && gameBoard[i][j+1] === gameBoard[i][j+2]) {
+                                gameBoard[i][j] = 1 - gameBoard[i][j+1];
+                                animateHint(i, j);
+                                hintFound = true;
+                            } else if (j > 0 && j < 5 && gameBoard[i][j-1] !== null && gameBoard[i][j-1] === gameBoard[i][j+1]) {
+                                gameBoard[i][j] = 1 - gameBoard[i][j-1];
+                                animateHint(i, j);
+                                hintFound = true;
+                            }
+                            // Check vertical patterns
+                            else if (i > 1 && gameBoard[i-1][j] !== null && gameBoard[i-1][j] === gameBoard[i-2][j]) {
+                                gameBoard[i][j] = 1 - gameBoard[i-1][j];
+                                animateHint(i, j);
+                                hintFound = true;
+                            } else if (i < 4 && gameBoard[i+1][j] !== null && gameBoard[i+1][j] === gameBoard[i+2][j]) {
+                                gameBoard[i][j] = 1 - gameBoard[i+1][j];
+                                animateHint(i, j);
+                                hintFound = true;
+                            } else if (i > 0 && i < 5 && gameBoard[i-1][j] !== null && gameBoard[i-1][j] === gameBoard[i+1][j]) {
+                                gameBoard[i][j] = 1 - gameBoard[i-1][j];
+                                animateHint(i, j);
+                                hintFound = true;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Priority 3: Use constraints
+            if (!hintFound) {
+                for (const c of constraints) {
+                    let r1 = c.row, c1 = c.col;
+                    let r2 = c.type === 'horizontal' ? r1 : r1 + 1;
+                    let c2 = c.type === 'horizontal' ? c1 + 1 : c1;
+                    
+                    if (gameBoard[r1][c1] !== null && gameBoard[r2][c2] === null && !fixedCells[r2][c2]) {
+                        gameBoard[r2][c2] = c.constraint === '=' ? gameBoard[r1][c1] : 1 - gameBoard[r1][c1];
+                        animateHint(r2, c2);
+                        hintFound = true;
+                        break;
+                    } else if (gameBoard[r1][c1] === null && gameBoard[r2][c2] !== null && !fixedCells[r1][c1]) {
+                        gameBoard[r1][c1] = c.constraint === '=' ? gameBoard[r2][c2] : 1 - gameBoard[r2][c2];
+                        animateHint(r1, c1);
+                        hintFound = true;
+                        break;
+                    }
+                }
+            }
+            
+            // Last resort: Correct placement from solution
+            if (!hintFound) {
+                let emptyCells = [];
+                for (let i = 0; i < 6; i++) {
+                    for (let j = 0; j < 6; j++) {
+                        if (gameBoard[i][j] === null && !fixedCells[i][j]) {
+                            emptyCells.push({i, j});
+                        }
+                    }
+                }
+                
+                if (emptyCells.length > 0) {
+                    const {i, j} = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                    gameBoard[i][j] = solution[i][j];
+                    animateHint(i, j);
+                    hintFound = true;
+                }
+            }
+            
+            if (hintFound) {
+                hintCount++;
+                checkAllRules();
+                renderBoard();
+                saveGameState();
+                if (checkVictory()) showVictory();
+            }
+        }
+
+        function animateHint(row, col) {
+            setTimeout(() => {
+                const cellEl = document.querySelector(`.cell[data-row='${row}'][data-col='${col}']`);
+                if (cellEl) {
+                    cellEl.classList.add('success');
+                    setTimeout(() => cellEl.classList.remove('success'), 800);
+                }
+            }, 100);
+        }
+
+        function createGoldenConfetti() {
+            const colors = ['#ffcc00', '#ffd700', '#ffed4e', '#fff59d', '#ffeb3b'];
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti-piece';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confetti.style.width = '12px';
+                    confetti.style.height = '12px';
+                    confetti.style.borderRadius = '50%';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 4000);
+                }, i * 30);
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#ffcc00', '#ff6b35', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti-piece';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 50);
+            }
         }
     </script>
 </body>
